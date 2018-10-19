@@ -9,11 +9,11 @@ router.get('/', (req, res) => {
 		.then(blogs => {
 			res.status(200).json(blogs);
 		});
-})
+});
 
 router.get('/featured', (req, res) => {
 	Blog
-		.where('featured')
+		.where('featured', true)
 		.then(blogs => {
 			res.status(200).json(blogs);
 		});
@@ -24,31 +24,24 @@ router.get('/:_id', (req, res) => {
 		.findById(req.params)
 		.then(blogs => {
 			if (blogs === null) res.status(404).end();
-			else { res.status(200).json(blogs); }
+			else res.status(200).json(blogs);
 		});
 });
 
 router.post('/', (req, res) => {
-	let dbUser = null;
-	User.findById(req.body.author)
-		.then(user => {
-			dbUser = user;
-			const newBlog = new Blog(req.body);
-			newBlog.author = user._id;
-			return newBlog.save();
-		})
-		.then(blog => {
-			dbUser.blogs.push(blog);
-			dbUser.save().then(() => res.status(201).json(blog));
-		})
+    const newBlog = new Blog(req.body)
+        newBlog.save() 
+        .then(newBlog => {
+            res.status(201).json(newBlog);
+        });
 });
 
 router.put('/:_id', (req, res) => {
 	Blog
-		.findByIdAndUpdate(req.params)
+		.findByIdAndUpdate(req.params._id, req.body)
 		.then(blogs => {
 			if (blogs === null) res.status(404).end();
-			else { res.status(200).json(blogs); }
+			else res.status(204).json(blogs);
 		});
 });
 
